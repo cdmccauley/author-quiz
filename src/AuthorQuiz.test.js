@@ -1,5 +1,8 @@
+// react imports
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+// component imports
 import AuthorQuiz from './AuthorQuiz';
 
 // enzyme imports
@@ -9,37 +12,24 @@ import Adapter from 'enzyme-adapter-react-16';
 // configure enzyme
 Enzyme.configure({ adapter: new Adapter() });
 
-// configure state for tests
+// declare state
+// provides data set for tests
 const state = {
   turnData: {
     books: [
       'The Adventures of Huckleberry Finn',
-      'Life on the Mississippi',
-      'Roughing It',
-      'Heart of Darkness',
-      'Lord Jim',
-      'The Secret Agent',
-      'Harry Potter and the Sorcerers Stone',
-      'The Silkworm',
-      'The Casual Vacancy',
       'The Shining',
-      'IT',
-      'Pet Cemetery',
       'David Copperfield',
-      'A Tale of Two Cities',
-      'A Christmas Carol',
-      'Hamlet',
-      'Macbeth',
       'Romeo and Juliet',
     ],
     author: {
-      name: 'Charles Dickens',
-      imageUrl: 'images/authors/charlesdickens.jpg',
+      name: 'Mark Twain',
+      imageUrl: 'images/authors/marktwain.jpg',
       imageSource: 'Wikimedia Commons',
       books: [
-        'David Copperfield',
-        'A Tale of two Cities',
-        'A Christmas Carol',
+        'The Adventures of Huckleberry Finn',
+        'Life on the Mississippi',
+        'Roughing It',
       ],
     },
   },
@@ -129,7 +119,7 @@ describe("Author Quiz", () => {
     });
 
     // test function parameter
-    // unsure why, but using first book title from collection explicitly
+    // uses first book title from collection explicitly
     it("should recieve The Adventures of Huckleberry Finn", () => {
       expect(handleAnswerSelected).toHaveBeenCalledWith("The Adventures of Huckleberry Finn");
     });

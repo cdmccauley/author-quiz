@@ -1,5 +1,13 @@
+// react imports
 import React from 'react';
+
+// react-router-dom imports
+import { Link } from 'react-router-dom';
+
+// prop-types imports
 import PropTypes from 'prop-types';
+
+// style sheet imports
 import './App.css';
 import './bootstrap.min.css';
 
@@ -57,10 +65,14 @@ Turn.propTypes = {
   highlight: PropTypes.string.isRequired,
 };
 
-function Continue() {
+function Continue({ show, onContinue }) {
   return(
-    <div>
-      
+    <div className="row continue">
+    { show
+      ? <div className="col-11">
+          <button className="btn btn-primary btn-lg float-right" />
+        </div>
+      : null }
     </div>
   );
 };
@@ -72,18 +84,19 @@ function Footer() {
         <p className="text-muted credit">
           All images are from <a href="http://commons.wikimedia.org/wiki/Main_Page">Wikimedia Commons</a> and are in the public domain.
         </p>
-      </div>
+      </div> 
       
     </div>
   );
 };
 
-function AuthorQuiz({ turnData, highlight, onAnswerSelected }) {
+function AuthorQuiz({ turnData, highlight, onAnswerSelected, onContinue }) {
   return (
     <div className="container-fluid">
       <Hero />
       <Turn { ...turnData } highlight={ highlight } onAnswerSelected={ onAnswerSelected } />
-      <Continue />
+      <Continue show={ highlight === 'correct' } onContinue={ onContinue } />
+      <p><Link to="/add">Add an author</Link></p>
       <Footer />
     </div>
   );
