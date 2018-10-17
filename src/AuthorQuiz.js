@@ -1,6 +1,9 @@
 // react imports
 import React from 'react';
 
+// react-redux imports
+import { connect } from 'react-redux';
+
 // react-router-dom imports
 import { Link } from 'react-router-dom';
 
@@ -70,7 +73,7 @@ function Continue({ show, onContinue }) {
     <div className="row continue">
     { show
       ? <div className="col-11">
-          <button className="btn btn-primary btn-lg float-right" />
+          <button className="btn btn-primary btn-lg float-right" onClick={ onContinue }>Continue</button>
         </div>
       : null }
     </div>
@@ -90,16 +93,35 @@ function Footer() {
   );
 };
 
-function AuthorQuiz({ turnData, highlight, onAnswerSelected, onContinue }) {
-  return (
-    <div className="container-fluid">
-      <Hero />
-      <Turn { ...turnData } highlight={ highlight } onAnswerSelected={ onAnswerSelected } />
-      <Continue show={ highlight === 'correct' } onContinue={ onContinue } />
-      <p><Link to="/add">Add an author</Link></p>
-      <Footer />
-    </div>
-  );
-}
+function mapStateToProps(state) {
+  return {
+    turnData: state.turnData,
+    highlight: state.highlight,
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onAnswerSelected: (answer) => {
+      dispatch({ type: 'ANSWER_SELECTED', answer });
+    },
+    onContinue: () => {
+      dispatch({ type: 'CONTINUE' });
+    },
+  };
+};
+
+const AuthorQuiz = connect(mapStateToProps, mapDispatchToProps)(
+  function ({ turnData, highlight, onAnswerSelected, onContinue }) {
+    return (
+      <div className="container-fluid">
+        <Hero />
+        <Turn { ...turnData } highlight={ highlight } onAnswerSelected={ onAnswerSelected } />
+        <Continue show={ highlight === 'correct' } onContinue={ onContinue } />
+        <p><Link to="/add">Add an author</Link></p>
+        <Footer />
+      </div>
+    );
+})
 
 export default AuthorQuiz;

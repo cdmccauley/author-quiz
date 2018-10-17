@@ -1,18 +1,24 @@
-// imports from create-react-app
+// create-react-app imports
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import AuthorQuiz from './AuthorQuiz';
 import * as serviceWorker from './serviceWorker';
 
-// imports from react-router-dom
-import { BrowserRouter, Route, withRouter } from 'react-router-dom';
+// stylesheet imports
+import './index.css';
 
-// imports from underscore
+// redux and react-redux imports
+import * as Redux from 'redux';
+import * as ReactRedux from 'react-redux';
+
+// react-router-dom imports
+import { BrowserRouter, Route } from 'react-router-dom';
+
+// underscore imports
 import { shuffle, sample } from 'underscore';
 
 // component imports
 import AddAuthorForm from './AddAuthorForm';
+import AuthorQuiz from './AuthorQuiz';
 
 // application data set
 const authors = [
@@ -104,58 +110,67 @@ function getTurnData(authors) {
 
 };
 
-function resetState() {
-  return {
-    turnData: getTurnData(authors),
-    highlight: '',
-  };
+// function resetState() {
+//   return {
+//     turnData: getTurnData(authors),
+//     highlight: '',
+//   };
+// };
+
+function reducer(state = { authors, turnData: getTurnData(authors), highlight: ''}, action) {
+  switch (action.type) {
+    case 'ANSWER_SELECTED':
+      const isCorrect = state.turnData.author.books.some((book) => book === action.answer);
+      return Object.assign({}, state, { highlight: isCorrect ? 'correct' : 'wrong' });
+    case 'CONTINUE':
+      return Object.assign({}, state, { highlight: '', turnData: getTurnData(state.authors)});
+    case 'ADD_AUTHOR':
+      return Object.assign({}, state, { authors: state.authors.concat([action.author])});
+    default:
+      return state;
+  }
 };
+
+let store = Redux.createStore(reducer);
 
 // initial state
 // has turn data for use in turn
 // has blank highlight for white background
-let state = resetState();
+//let state = resetState();
 
 // answer click event handler
 // determines if correct answer was clicked and sets background color
-function onAnswerSelected(answer) {
-  const isCorrect = state.turnData.author.books.some((book) => book === answer);
-  state.highlight = isCorrect ? 'correct' : 'wrong';
-  render();
-};
-
-function App() {
-  return(
-    <AuthorQuiz { ...state } 
-      onAnswerSelected={ onAnswerSelected } 
-      onContinue={ () => {
-        state = resetState();
-        render();
-      } } />
-  );
-};
-
-const AuthorWrapper = withRouter(({ history }) =>
-  <AddAuthorForm onAddAuthor={ (author) => {
-    authors.push(author);
-    history.push('/');
-  } } />
-);
+// function onAnswerSelected(answer) {
+//   const isCorrect = state.turnData.author.books.some((book) => book === answer);
+//   state.highlight = isCorrect ? 'correct' : 'wrong';
+//   render();
+// };
 
 // render wrapper function allows declarative updates
-function render() {
-  ReactDOM.render(
-    <BrowserRouter>
+// function render() {
+//   ReactDOM.render(
+//     <BrowserRouter>
+//       <React.Fragment>
+//         <Route exact path="/" component={ App } />
+//         <Route path="/add" component={ AuthorWrapper } />
+//       </React.Fragment>
+//     </BrowserRouter>, document.getElementById('root')
+//   );
+// }
+
+ReactDOM.render(
+  <BrowserRouter>
+    <ReactRedux.Provider store={ store }>
       <React.Fragment>
-        <Route exact path="/" component={ App } />
-        <Route path="/add" component={ AuthorWrapper } />
+        <Route exact path="/" component={ AuthorQuiz } />
+        <Route path="/add" component={ AddAuthorForm } />
       </React.Fragment>
-    </BrowserRouter>, document.getElementById('root')
-  );
-}
+    </ReactRedux.Provider>
+  </BrowserRouter>, document.getElementById('root')
+);
 
 // render app
-render();
+// render();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
